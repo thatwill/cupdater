@@ -1,0 +1,2 @@
+# cupdater
+Updater for Chocolatey

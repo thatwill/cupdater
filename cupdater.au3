@@ -9,6 +9,7 @@
 ;autoit settings
 #include <Array.au3>
 #include <TrayConstants.au3>
+#include <File.au3>
 AutoItSetOption("TrayAutoPause",0)
 AutoItSetOption("TrayMenuMode",2)
 
@@ -24,13 +25,13 @@ TraySetIcon($ChocoExe)
 $trRunChoco = TrayCreateItem("Run "&$AppName)
 
 Func UpdateCheck()
-   RunWait(@ComSpec & " /c" & $ChocoExe & " outdated -r > outdated.dat", @ScriptDir, @SW_HIDE)
-   $hOutdated = FileOpen(@ScriptDir&"\outdated.dat",0)
-   $arOutdated = FileReadToArray($hOutdated)
-   FileClose($hOutdated)
-   FileDelete(@ScriptDir&"\outdated.dat")
+   $tmpfile = _TempFile()
+   RunWait(@ComSpec & " /c" & $ChocoExe & " outdated -r > "& $tmpfile, @ScriptDir, @SW_HIDE)
+   $arOutdated = FileReadToArray($tmpfile)
+   FileDelete($tmpfile)
 
    ;check for pinned apps and remove from list (apps which will not be updated), and remove lines which do not contain other apps.
+   ;lines ending in "true" will be pinned apps. Lines not ending in "false" are not apps.
    $todelete=""
    For $i = 0 to UBound($arOutdated)-1
 	  $strPinned = StringRight($arOutdated[$i],5)

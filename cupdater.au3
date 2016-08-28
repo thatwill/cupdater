@@ -32,6 +32,7 @@ $trRunChoco = TrayCreateItem("Run "&$AppName)
 $trExit = TrayCreateItem("Exit")
 
 Func UpdateCheck()
+   TraySetToolTip($AppName& " is checking for updates...")
    $tmpfile = _TempFile()
    RunWait(@ComSpec & " /c" & $ChocoExe & " outdated -r > "& $tmpfile, @ScriptDir, @SW_HIDE)
    ;$tmpfile = @scriptDir &"\test.dat" ;testing purposes
@@ -53,11 +54,9 @@ Func UpdateCheck()
    EndIf
 
 if $iNumUpdates>0 Then
-
-_Toast_Set(5,"0x2B6091","0xFFFFFF","0xF1EFE1","0x202F3C")
-	  _Toast_Show($ChocoExe, $AppName, $iNumUpdates & " updates available.", 5,False)
-
-	  TraySetToolTip($AppName &" - "& $iNumUpdates & " updates")
+   TraySetToolTip($AppName &" - "& $iNumUpdates & " updates")
+   _Toast_Set(5,"0x2B6091","0xFFFFFF","0xF1EFE1","0x202F3C")
+   _Toast_Show($ChocoExe, $AppName, $iNumUpdates & " updates available.", 5,False)
    Else
 	  Exit ; if no updates now, exit app.
    EndIf
@@ -81,6 +80,11 @@ Func RunChoco()
 	EndIf
 EndFunc
 
+
+if Not (FileExists($ChocoExe)) Then
+   msgbox(16,$AppName,"Chocolatey is not found."&@CRLF&"Ensure Chocolatey is located and accessible at:"&@CRLF&@CRLF&$ChocoExe)
+   Exit
+EndIf
 UpdateCheck()
 
 While 1

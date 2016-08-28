@@ -35,7 +35,7 @@ Func UpdateCheck()
    TraySetToolTip($AppName& " is checking for updates...")
    $tmpfile = _TempFile()
    RunWait(@ComSpec & " /c" & $ChocoExe & " outdated -r > "& $tmpfile, @ScriptDir, @SW_HIDE)
-   ;$tmpfile = @scriptDir &"\test.dat" ;testing purposes
+   ;$tmpfile = @scriptDir &"\test.txt" ;testing purposes
    $arOutdated = FileReadToArray($tmpfile)
    FileDelete($tmpfile)
 
@@ -75,7 +75,7 @@ Func RunChoco()
    EndIf
 
    if $msgResponse = 6 Then
-	  ShellExecute(@ComSpec,"/c title " & $AppName & $ChocoExe & " upgrade all -r -y","","runas")
+	  ShellExecute(@ComSpec,"/c title " & $AppName &" & "& $ChocoExe & " upgrade all -r -y & pause","","runas")
 	  Exit
 	EndIf
 EndFunc

@@ -11,7 +11,13 @@
 #include <TrayConstants.au3>
 #include <File.au3>
 AutoItSetOption("TrayAutoPause",0)
-AutoItSetOption("TrayMenuMode",2)
+AutoItSetOption("TrayMenuMode",3)
+
+; Toast by Melba
+; https://www.autoitscript.com/forum/topic/108445-how-to-make-toast-bugfix-version-16-jul-14
+; "Any of my own code posted anywhere on the forum is available for use by others without any restriction of any kind."
+; Slightly edited by me to make it clickable.
+#include "Toast.au3"
 
 ;init global vars
 Global Const $ChocoExe=@AppDataCommonDir&"\chocolatey\choco.exe"
@@ -23,10 +29,12 @@ Global $arOutdated
 TraySetToolTip($AppName)
 TraySetIcon($ChocoExe)
 $trRunChoco = TrayCreateItem("Run "&$AppName)
+$trExit = TrayCreateItem("Exit")
 
 Func UpdateCheck()
    $tmpfile = _TempFile()
    RunWait(@ComSpec & " /c" & $ChocoExe & " outdated -r > "& $tmpfile, @ScriptDir, @SW_HIDE)
+   ;$tmpfile = @scriptDir &"\test.dat" ;testing purposes
    $arOutdated = FileReadToArray($tmpfile)
    FileDelete($tmpfile)
 
@@ -45,7 +53,10 @@ Func UpdateCheck()
    EndIf
 
 if $iNumUpdates>0 Then
-	  TrayTip($AppName,$iNumUpdates & " updates available.",0)
+
+_Toast_Set(5,"0x2B6091","0xFFFFFF","0xF1EFE1","0x202F3C")
+	  _Toast_Show($ChocoExe, $AppName, $iNumUpdates & " updates available.", 5,False)
+
 	  TraySetToolTip($AppName &" - "& $iNumUpdates & " updates")
    Else
 	  Exit ; if no updates now, exit app.
@@ -76,5 +87,7 @@ While 1
    Switch TrayGetMsg()
 	  case $trRunChoco
 		 RunChoco()
+	  case $trExit
+		 Exit
    EndSwitch
 WEnd

@@ -2,7 +2,7 @@
 ##Overview
 Updater for Chocolatey.
 
-This application will check for new updates in Chocolatey, and inform the user by toast popup window and system tray icon. The updates can then be started by clicking the toast, or from the system tray.
+This application will check for new updates in Chocolatey, and inform the user by toast popup window and system tray icon. The updates can then be started by clicking the toast, or from the system tray. The update is currently run as a regular `choco upgrade` in a command prompt window.
 
 It is designed to be placed in Windows' Task Scheduler, for automatic checking.
 

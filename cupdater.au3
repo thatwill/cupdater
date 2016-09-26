@@ -92,7 +92,7 @@ Func RunChoco()
    ;GUI window for update selection
    $frmUpdater = GUICreate("Chocolatey Updater", 320, 274, 192, 124)
    GUISetIcon($ChocoExe)
-   $lvUpdateList = GUICtrlCreateListView("Package Name|Current ver|Available ver", 8, 8, 302, 217, $GUI_SS_DEFAULT_LISTVIEW, BitOR($WS_EX_CLIENTEDGE,$LVS_EX_CHECKBOXES, $LVS_EX_FULLROWSELECT))
+   $lvUpdateList = GUICtrlCreateListView("Package name|Current ver|Available ver", 8, 8, 302, 217, $GUI_SS_DEFAULT_LISTVIEW, BitOR($WS_EX_CLIENTEDGE,$LVS_EX_CHECKBOXES, $LVS_EX_FULLROWSELECT))
    $btnCancel = GUICtrlCreateButton("Cancel", 253, 232, 57, 33)
    $btnInstall = GUICtrlCreateButton("Install", 8, 232, 57, 33)
 
@@ -100,9 +100,16 @@ Func RunChoco()
 	  $arlvItems[$i] = GUICtrlCreateListViewItem($arOutdated[$i], $lvUpdateList)
 	  GUICtrlSetState (-1,$GUI_CHECKED)
    Next
-   _GUICtrlListView_SetColumnWidth($lvUpdateList,0,$LVSCW_AUTOSIZE)
+
+
+   _GUICtrlListView_AddColumn($lvUpdateList,"",0);add dummy column to work around Windows' USEHEADER width calculation behaviour
    _GUICtrlListView_SetColumnWidth($lvUpdateList,1,$LVSCW_AUTOSIZE_USEHEADER)
    _GUICtrlListView_SetColumnWidth($lvUpdateList,2,$LVSCW_AUTOSIZE_USEHEADER)
+   _GUICtrlListView_DeleteColumn($lvUpdateList,3)
+   $width1=_GUICtrlListView_GetColumnWidth($lvUpdateList,1)
+   $width2=_GUICtrlListView_GetColumnWidth($lvUpdateList,2)
+   $width0=302-$width1-$width2-5
+   _GUICtrlListView_SetColumnWidth($lvUpdateList,0,$width0)
 
    GUISetState(@SW_SHOW)
 

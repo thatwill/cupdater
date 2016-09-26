@@ -1,6 +1,6 @@
 # cupdater
 ##Overview
-Updater for Chocolatey.
+Updater for [Chocolatey](https://chocolatey.org/).
 
 This application will check for new updates in Chocolatey, and inform the user by toast popup window and system tray icon. The updates can then be started by clicking the toast, or from the system tray. You'll be able to select the applications you want to update, which will then be run in a command prompt window using `choco upgrade`.
 

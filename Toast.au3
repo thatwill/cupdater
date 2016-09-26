@@ -453,13 +453,15 @@ EndFunc   ;==>_Toast_Show
 ; Example........; Yes
 ;=====================================================================================================================
 
-Func _Toast_Hide()
+Func _Toast_Hide($now=False)
 
 	; If no Toast to hide, return
 	If $hToast_Handle = 0 Then Return SetError(1, 0, -1)
 
 	; Slide Toast back behind systray
-	DllCall("user32.dll", "int", "AnimateWindow", "hwnd", $hToast_Handle, "int", 500, "long", $iToast_Move)
+	if not($now) then
+	  DllCall("user32.dll", "int", "AnimateWindow", "hwnd", $hToast_Handle, "int", 500, "long", $iToast_Move)
+	EndIf
 	; Delete Toast slice
 	GUIDelete($hToast_Handle)
 	; Set flag for "no Toast"
@@ -589,7 +591,7 @@ EndFunc   ;==>_Toast_Timer_Check
 ; Name...........: _Toast_WM_EVENTS
 ; Description ...: Message handler to check if closure [X] clicked
 ; Author ........: Melba23
-; Modified.......:
+; Modified.......: WB
 ; Remarks .......: This function is used internally by _Toast_Show if the Wait parameter is set to False
 ; ===============================================================================================================================
 Func _Toast_WM_EVENTS($hWnd, $Msg, $wParam, $lParam)
@@ -600,7 +602,10 @@ Func _Toast_WM_EVENTS($hWnd, $Msg, $wParam, $lParam)
 			; Check mouse position
 			;Local $aPos = GUIGetCursorInfo($hToast_Handle)
 			;If $aPos[4] = $hToast_Close_X Then $fToast_Close = True
-			RunChoco() ; Addition - Run choco update on toast click anywhere
+
+			; Addition - Run choco update on toast click anywhere
+			_Toast_Hide(True)
+			$doUpdates = True
 		EndIf
 	EndIf
 	Return 'GUI_RUNDEFMSG'

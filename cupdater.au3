@@ -95,6 +95,7 @@ Func RunChoco()
    $lvUpdateList = GUICtrlCreateListView("Package name|Current ver|Available ver", 8, 8, 302, 217, $GUI_SS_DEFAULT_LISTVIEW, BitOR($WS_EX_CLIENTEDGE,$LVS_EX_CHECKBOXES, $LVS_EX_FULLROWSELECT))
    $btnCancel = GUICtrlCreateButton("Cancel", 253, 232, 57, 33)
    $btnInstall = GUICtrlCreateButton("Install", 8, 232, 57, 33)
+   $chkShutdown = GUICtrlCreateCheckbox("Shutdown when done", 72, 240, 121, 17)
 
    for $i = 0 to $iNumUpdates-1
 	  $arlvItems[$i] = GUICtrlCreateListViewItem($arOutdated[$i], $lvUpdateList)
@@ -116,11 +117,12 @@ Func RunChoco()
    ;gui wait loop
    While 1
 	  $nMsg = GUIGetMsg()
-	  Switch $nMsg,
+	  Switch $nMsg
 		 Case $GUI_EVENT_CLOSE,$btnCancel
 			Exit
 		 Case $btnInstall
 			Local $strToUpdate = ""
+
 			for $i = 0 to $iNumUpdates-1
 			   if GUICtrlRead($arlvItems[$i],1)==$GUI_CHECKED Then
 				  $iPos = StringInStr($arOutdated[$i],"|",2,1)
@@ -128,7 +130,14 @@ Func RunChoco()
 				  $strToUpdate = $strToUpdate & " " & $strAppName
 			   EndIf
 			next
-			ShellExecute(@ComSpec,"/c title " & $AppName &" & "& $ChocoExe & " upgrade " & $strToUpdate & " -r -y & pause","","runas")
+			$ChocoUpdateCommand =  $ChocoExe & " upgrade " & $strToUpdate & " -r -y"
+
+			If GUICtrlRead($chkShutdown)==$GUI_CHECKED Then
+				$PostUpdateCommand = "shutdown /s /f /t 30"
+			Else
+				$PostUpdateCommand = "pause"
+			EndIf
+			ShellExecute(@ComSpec,"/c title " & $AppName & " & " & $ChocoUpdateCommand & " & " & $PostUpdateCommand,"","runas")
 		 Exit
 	  EndSwitch
 	WEnd
